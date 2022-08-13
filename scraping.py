@@ -19,7 +19,8 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-        "last_modified": dt.datetime.now()
+        "last_modified": dt.datetime.now(),
+        "hemispheres": showhemispheres()
     }
 
     # Stop webdriver and return data
@@ -97,14 +98,16 @@ def mars_facts():
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html(classes="table table-striped")
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    # If running as script, print scraped data
-    print(scrape_all())
+#     # If running as script, print scraped data
+#     print(scrape_all())
 
-def showhemispheres(browser):
+def showhemispheres():
     # Visit url
-    url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    executable_path = {'executable_path': ChromeDriverManager().install()}
+    browser = Browser('chrome', **executable_path, headless=False)
+    url = 'https://marshemispheres.com/'
     browser.visit(url)
     # collect four hemisphere images and titles
     hemisphere_image_urls = []
@@ -118,6 +121,7 @@ def showhemispheres(browser):
         hemispheres["title"] = title
         hemisphere_image_urls.append(hemispheres)
         browser.back()
+    browser.quit()
     return hemisphere_image_urls
 
 if __name__ == "__main__":
